@@ -26,16 +26,7 @@ class RedactingFormatter(logging.Formatter):
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        """
-        Formats the log record and applies redaction to sensitive data.
-
-        Args:
-            record (logging.LogRecord): The log record to be formatted.
-
-        Returns:
-            str: The formatted log message with redacted sensitive data.
-        """
-
+        """Formats the log record and applies redaction to sensitive data."""
         formatted_message = super(RedactingFormatter, self).format(record)
         return filter_datum(self.fields, self.REDACTION,
                             formatted_message, self.SEPARATOR)
