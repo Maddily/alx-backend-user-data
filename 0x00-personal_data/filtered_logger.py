@@ -109,3 +109,34 @@ def get_db() -> connection.MySQLConnection:
     )
 
     return connection
+
+
+def main() -> None:
+    """
+    Main function that retrieves user data from the database and logs it.
+
+    This function retrieves user data from the database,
+    constructs a log message for each user, and logs
+    the message using the logger.
+    """
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM users;')
+
+    logger = get_logger()
+
+    for row in cursor:
+        message = (
+            f'name={row[0]}; email={row[1]}; phone={row[2]}; ssn={row[3]}; '
+            f'password={row[4]}; ip={row[5]}; last_login={row[6]}; '
+            f'user_agent={row[7]};'
+        )
+        logger.info(message)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == '__main__':
+    main()
