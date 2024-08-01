@@ -84,13 +84,9 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     return connection
 
 
-def main() -> None:
+def main():
     """
     Main function that retrieves user data from the database and logs it.
-
-    This function retrieves user data from the database,
-    constructs a log message for each user, and logs
-    the message using the logger.
     """
 
     db = get_db()
