@@ -25,7 +25,7 @@ class BasicAuth(Auth):
         if (
             authorization_header is None
             or not isinstance(authorization_header, str)
-            or authorization_header.split(' ')[0] != 'Basic'
+            or not authorization_header.startswith('Basic ')
         ):
             return None
 
@@ -44,10 +44,9 @@ class BasicAuth(Auth):
             return None
 
         try:
-            decoded_s = base64.b64decode(base64_authorization_header,
-                                         validate=True)
-            return decoded_s.decode('utf-8')
-        except binascii.Error:
+            decoded_bytes = base64.b64decode(base64_authorization_header)
+            return decoded_bytes.decode('utf-8')
+        except (binascii.Error, UnicodeDecodeError):
             return None
 
     def extract_user_credentials(
@@ -63,7 +62,7 @@ class BasicAuth(Auth):
         ):
             return None, None
 
-        credentials = decoded_base64_authorization_header.split(':')
+        credentials = decoded_base64_authorization_header.split(':', 1)
         return credentials[0], credentials[1]
 
     def user_object_from_credentials(
@@ -97,3 +96,32 @@ class BasicAuth(Auth):
                 return users[0]
         else:
             return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """
+        """
+
+        if request is None:
+            return None
+
+        auth_header = self.authorization_header(request)
+        if auth_header is None:
+            return None
+
+        encoded_auth_header = self.extract_base64_authorization_header(
+            auth_header)
+        if encoded_auth_header is None:
+            return None
+
+        decoded_auth_header = self.decode_base64_authorization_header(
+            encoded_auth_header)
+        if decoded_auth_header is None:
+            return None
+
+        user_email, user_pwd = self.extract_user_credentials(
+            decoded_auth_header)
+
+        if user_email is None or user_pwd is None:
+            return None
+
+        return self.user_object_from_credentials(user_email, user_pwd)
