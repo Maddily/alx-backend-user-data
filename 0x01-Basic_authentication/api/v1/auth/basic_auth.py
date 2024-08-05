@@ -79,49 +79,42 @@ class BasicAuth(Auth):
         ):
             return None
 
-        # IF the db contains User instances
-        if len(User.all()) != 0:
-            try:
-                # Search for users with user_email
-                users = User.search({'email': user_email})
-            except AttributeError:
-                return None
-            # IF no users are found
-            if len(users) == 0:
-                return None
-            # IF user_pwd isn't the user's password
-            if not users[0].is_valid_password(user_pwd):
-                return None
-            else:
-                return users[0]
-        else:
+        users = User.search({'email': user_email})
+
+        if not users:
             return None
+
+        user = users[0]
+        if not user.is_valid_password(user_pwd):
+            return None
+        return user
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """
-        """
+            """
+            Retrieves the current user based on the provided request.
+            """
 
-        if request is None:
-            return None
+            if request is None:
+                return None
 
-        auth_header = self.authorization_header(request)
-        if auth_header is None:
-            return None
+            auth_header = self.authorization_header(request)
+            if auth_header is None:
+                return None
 
-        encoded_auth_header = self.extract_base64_authorization_header(
-            auth_header)
-        if encoded_auth_header is None:
-            return None
+            encoded_auth_header = self.extract_base64_authorization_header(
+                auth_header)
+            if encoded_auth_header is None:
+                return None
 
-        decoded_auth_header = self.decode_base64_authorization_header(
-            encoded_auth_header)
-        if decoded_auth_header is None:
-            return None
+            decoded_auth_header = self.decode_base64_authorization_header(
+                encoded_auth_header)
+            if decoded_auth_header is None:
+                return None
 
-        user_email, user_pwd = self.extract_user_credentials(
-            decoded_auth_header)
+            user_email, user_pwd = self.extract_user_credentials(
+                decoded_auth_header)
 
-        if user_email is None or user_pwd is None:
-            return None
+            if user_email is None or user_pwd is None:
+                return None
 
-        return self.user_object_from_credentials(user_email, user_pwd)
+            return self.user_object_from_credentials(user_email, user_pwd)
