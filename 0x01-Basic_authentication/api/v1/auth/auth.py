@@ -3,7 +3,7 @@
 This module contains the Auth class which handles
 authentication and authorization.
 """
-from flask import request
+import flask
 from typing import List, TypeVar
 
 
@@ -37,7 +37,12 @@ class Auth:
         Retrieves the authorization header from the request.
         """
 
-        return None
+        if request is None:
+            return None
+
+        auth_header_key = request.headers.get('Authorization')
+
+        return auth_header_key
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
