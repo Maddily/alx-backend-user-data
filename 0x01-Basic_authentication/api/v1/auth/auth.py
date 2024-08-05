@@ -3,7 +3,6 @@
 This module contains the Auth class which handles
 authentication and authorization.
 """
-import flask
 from typing import List, TypeVar
 
 
@@ -27,10 +26,14 @@ class Auth:
         if path[-1] != '/':
             path = path + '/'
 
-        if path not in excluded_paths:
-            return True
+        for excluded_path in excluded_paths:
+            if excluded_path[-1] == '*':
+                if path.startswith(excluded_path[:-1]):
+                    return False
+            elif path == excluded_path:
+                return False
 
-        return False
+        return True
 
     def authorization_header(self, request=None) -> str:
         """
