@@ -4,6 +4,7 @@ This module contains the Auth class which handles
 authentication and authorization.
 """
 from typing import List, TypeVar
+import os
 
 
 class Auth:
@@ -53,3 +54,13 @@ class Auth:
         """
 
         return None
+
+    def session_cookie(self, request=None):
+        """
+        Retrieve the session cookie from the request.
+        """
+
+        if request is None:
+            return None
+
+        return request.cookies.get(os.getenv('SESSION_NAME'))
