@@ -4,7 +4,7 @@ This module contains the routes and functions
 related to session authentication.
 """
 from api.v1.views import app_views
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from models.user import User
 import os
 
@@ -41,3 +41,17 @@ def login():
         return response
     except Exception:
         return None
+
+
+@app_views.route('/auth_session/logout',
+                 methods=['DELETE'], strict_slashes=False)
+def logout():
+    """
+    Log out the user by destroying the session.
+    """
+
+    from api.v1.app import auth
+    if not auth.destroy_session(request):
+        abort(404)
+
+    return jsonify({}), 200
