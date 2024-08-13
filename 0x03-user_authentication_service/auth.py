@@ -9,7 +9,7 @@ from user import User
 from uuid import uuid4
 
 
-def _hash_password(password) -> bytes:
+def _hash_password(password: str) -> bytes:
     """
     Hashes a password using bcrypt.
     """
