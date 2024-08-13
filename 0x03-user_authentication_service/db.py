@@ -59,7 +59,7 @@ class DB:
         except InvalidRequestError:
             raise InvalidRequestError("Invalid query arguments provided.")
 
-    def update_user(self, user_id, **kwargs) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """
         Update the attributes of a user.
         """
